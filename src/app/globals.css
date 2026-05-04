@@ -1,0 +1,383 @@
+@import "tailwindcss";
+@source "../**/*.{js,ts,jsx,tsx}";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0B0F1A;
+  --primary: #0B0F1A;
+  --primary-foreground: #F9FAFB;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
+  --accent: #3B82F6;
+  --accent-foreground: #ffffff;
+  --border: #E5E7EB;
+  --card: #F9FAFB;
+  --card-foreground: #111827;
+  --glow-color: rgba(59, 130, 246, 0.15);
+  --lava-1: rgba(59, 130, 246, 0.4);
+  --lava-2: rgba(139, 92, 246, 0.35);
+  --lava-3: rgba(6, 182, 212, 0.3);
+  --lava-4: rgba(236, 72, 153, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #05070E;
+    --foreground: #F9FAFB;
+    --primary: #F9FAFB;
+    --primary-foreground: #0B0F1A;
+    --muted: #12162a;
+    --muted-foreground: #9CA3AF;
+    --accent: #3B82F6;
+    --accent-foreground: #ffffff;
+    --border: #1a1f35;
+    --card: #0d1025;
+    --card-foreground: #F9FAFB;
+    --glow-color: rgba(59, 130, 246, 0.25);
+    --lava-1: rgba(59, 130, 246, 0.5);
+    --lava-2: rgba(139, 92, 246, 0.4);
+    --lava-3: rgba(6, 182, 212, 0.35);
+    --lava-4: rgba(236, 72, 153, 0.25);
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Mobiel menu: checkbox `#nav-mobile-toggle` — scroll lock zonder JS */
+@media (max-width: 767.98px) {
+  body:has(#nav-mobile-toggle:checked) {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}
+
+/* Hamburger-streepjes naar X als menu open */
+@media (max-width: 767.98px) {
+  #nav-mobile-toggle:checked ~ label[for="nav-mobile-toggle"] .nav-hb-1 {
+    transform: translateY(7px) rotate(45deg);
+  }
+  #nav-mobile-toggle:checked ~ label[for="nav-mobile-toggle"] .nav-hb-2 {
+    opacity: 0;
+    width: 0;
+  }
+  #nav-mobile-toggle:checked ~ label[for="nav-mobile-toggle"] .nav-hb-3 {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-code-line {
+    animation: none;
+    opacity: 0.06;
+  }
+  .hero-scroll-hint {
+    animation: none !important;
+  }
+  .lava-blob-1,
+  .lava-blob-2,
+  .lava-blob-3,
+  .lava-blob-4 {
+    animation: none !important;
+  }
+  .hero-theme-in,
+  .hero-scroll-cta,
+  .nav-shell-fade {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── Theme motion (CSS-only hero/nav: betrouwbaar op mobiel, geen Framer-hydrate) ── */
+
+@keyframes theme-fade-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-theme-in {
+    animation: theme-fade-rise 0.78s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .hero-theme-in-delay-a {
+    animation-delay: 0.08s;
+  }
+  .hero-theme-in-delay-b {
+    animation-delay: 0.18s;
+  }
+  .hero-theme-in-delay-c {
+    animation-delay: 0.28s;
+  }
+  .hero-theme-in-delay-d {
+    animation-delay: 0.4s;
+  }
+  .hero-theme-in-delay-e {
+    animation-delay: 0.52s;
+  }
+
+  .hero-scroll-cta {
+    animation: theme-fade-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.52s;
+  }
+
+  /* Alleen opacity: geen transform → breekt position:fixed van mobielmenu niet.
+     Alleen vanaf md: op smalle viewports geen nav-fade (minder iOS/Safari-randen). */
+  @media (min-width: 768px) {
+    @keyframes nav-shell-fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .nav-shell-fade {
+      animation: nav-shell-fade-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  }
+}
+
+/* ── Lava Lamp Blobs ── */
+
+@keyframes lava-morph-1 {
+  0%, 100% {
+    border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 60% 40% 30% 70% / 50% 60% 40% 50%;
+    transform: translate(80px, -60px) rotate(90deg) scale(1.15);
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 30% 60% 70%;
+    transform: translate(-40px, 80px) rotate(180deg) scale(0.9);
+  }
+  75% {
+    border-radius: 50% 40% 50% 60% / 35% 55% 45% 65%;
+    transform: translate(60px, 40px) rotate(270deg) scale(1.1);
+  }
+}
+
+@keyframes lava-morph-2 {
+  0%, 100% {
+    border-radius: 50% 50% 40% 60% / 40% 60% 40% 60%;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 35% 65% 55% 45% / 55% 35% 65% 45%;
+    transform: translate(-70px, 50px) rotate(-90deg) scale(1.2);
+  }
+  50% {
+    border-radius: 60% 40% 45% 55% / 45% 55% 35% 65%;
+    transform: translate(50px, -70px) rotate(-180deg) scale(0.85);
+  }
+  75% {
+    border-radius: 45% 55% 60% 40% / 60% 40% 55% 45%;
+    transform: translate(-30px, -40px) rotate(-270deg) scale(1.05);
+  }
+}
+
+@keyframes lava-morph-3 {
+  0%, 100% {
+    border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%;
+    transform: translate(100px, 60px) rotate(120deg) scale(1.1);
+  }
+  66% {
+    border-radius: 55% 45% 65% 35% / 35% 65% 45% 55%;
+    transform: translate(-60px, -80px) rotate(240deg) scale(0.95);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ── Utility Classes ── */
+
+.gradient-text {
+  background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 40%, #EC4899 70%, #06B6D4 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (prefers-color-scheme: light) {
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Blobs — desktop */
+.lava-blob {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lava-blob-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--lava-1);
+  filter: blur(80px);
+  animation: lava-morph-1 20s ease-in-out infinite;
+}
+
+.lava-blob-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--lava-2);
+  filter: blur(80px);
+  animation: lava-morph-2 25s ease-in-out infinite;
+}
+
+.lava-blob-3 {
+  width: 350px;
+  height: 350px;
+  background: var(--lava-3);
+  filter: blur(80px);
+  animation: lava-morph-3 18s ease-in-out infinite;
+}
+
+.lava-blob-4 {
+  width: 300px;
+  height: 300px;
+  background: var(--lava-4);
+  filter: blur(80px);
+  animation: lava-morph-1 22s ease-in-out infinite reverse;
+}
+
+/* Blobs — mobile: smaller but still animated */
+@media (max-width: 768px) {
+  .lava-blob {
+    filter: blur(50px) !important;
+  }
+  .lava-blob-1 { width: 250px; height: 250px; }
+  .lava-blob-2 { width: 220px; height: 220px; }
+  .lava-blob-3 { width: 180px; height: 180px; }
+  .lava-blob-4 { width: 160px; height: 160px; }
+}
+
+/* Floating code background */
+@keyframes code-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.15;
+  }
+  80% {
+    opacity: 0.08;
+  }
+  100% {
+    transform: translateY(calc(-100vh - 40px));
+    opacity: 0;
+  }
+}
+
+.floating-code-line {
+  position: absolute;
+  bottom: -30px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--accent);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  animation: code-rise var(--dur, 12s) linear infinite;
+  animation-delay: var(--del, 0s);
+}
+
+.glow-border {
+  position: relative;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899, #06B6D4);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.glow-border:hover::before {
+  opacity: 1;
+}
