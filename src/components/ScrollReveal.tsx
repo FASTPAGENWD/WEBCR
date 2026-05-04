@@ -24,39 +24,30 @@ function getNarrowServerSnapshot() {
 }
 
 /**
- * Desktop: Framer scroll-in. Smal scherm / SSR-telefoon: alleen een div (geen useInView / geen opacity-0).
+ * Alleen gemount op desktop (breed scherm + geen reduced motion).
+ * Aparte component zodat useInView ná mount draait met een geldige ref — niet met een effect die
+ * eerst bij `narrow===true` al met ref=null is afgebroken (dat liet desktop op opacity:0 hangen).
  */
-export default function ScrollReveal({
+function DesktopScrollReveal({
   children,
-  className = "",
-  delay = 0,
+  className,
+  delay,
 }: {
   children: ReactNode;
-  className?: string;
-  delay?: number;
+  className: string;
+  delay: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion() ?? false;
-  const narrow = useSyncExternalStore(
-    subscribeNarrow,
-    getNarrowSnapshot,
-    getNarrowServerSnapshot
-  );
-
   const inView = useInView(ref, {
     once: true,
     amount: 0.15,
     margin: "0px 0px -8% 0px",
   });
 
-  if (narrow || reduced) {
-    return <div className={className.trim()}>{children}</div>;
-  }
-
   return (
     <motion.div
       ref={ref}
-      className={className.trim()}
+      className={className}
       initial={{ opacity: 0, y: 24 }}
       animate={
         inView
@@ -72,4 +63,32 @@ export default function ScrollReveal({
       {children}
     </motion.div>
   );
+}
+
+/**
+ * Desktop: Framer scroll-in. Smal scherm / SSR-telefoon: alleen een div (geen useInView / geen opacity-0).
+ */
+export default function ScrollReveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const reduced = useReducedMotion() ?? false;
+  const narrow = useSyncExternalStore(
+    subscribeNarrow,
+    getNarrowSnapshot,
+    getNarrowServerSnapshot
+  );
+
+  const cls = className.trim();
+
+  if (narrow || reduced) {
+    return <div className={cls}>{children}</div>;
+  }
+
+  return <DesktopScrollReveal className={cls} delay={delay}>{children}</DesktopScrollReveal>;
 }
